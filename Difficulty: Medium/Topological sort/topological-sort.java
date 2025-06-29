@@ -12,28 +12,33 @@ class Solution {
             adj.get(u).add(v);
         }
         
-        int[] vis = new int[V];
-        Stack<Integer> st = new Stack<>();
+        //indegree array
+        int[] indegree = new int[V];
         for(int i=0;i<V;i++){
-            if(vis[i]==0){
-                dfsCheck(i,adj,vis,st);
+            for(int it : adj.get(i)){
+                indegree[it]++;
             }
         }
         ArrayList<Integer> ans = new ArrayList<>();
-        while(!st.isEmpty()){
-            ans.add(st.pop());
-        }
-        return ans;
-    }
-    
-    static void dfsCheck(int node, ArrayList<ArrayList<Integer>> adj, int[]vis, Stack<Integer> st){
-        vis[node] = 1;
-        //visit neighbors
-        for(int it : adj.get(node)){
-            if(vis[it]==0){
-                dfsCheck(it,adj,vis,st);
+        Queue<Integer> q = new LinkedList<>();
+        //put elements into queue with indegree 0
+        for(int i=0;i<V;i++){
+            if(indegree[i]==0){
+                q.add(i);
             }
         }
-        st.add(node);//during backtrack
+        //start bfs
+        while(!q.isEmpty()){
+            int val = q.poll();
+            ans.add(val);
+            //reduce indegree of neighbors
+            for(int it : adj.get(val)){
+                indegree[it]--;
+                if(indegree[it]==0){
+                    q.add(it);
+                }
+            }
+        }
+        return ans;
     }
 }
